@@ -2,7 +2,7 @@ name: "Vprofile IAC"
 on:
   push:
     branches:
-    - maim
+    - main
     - stage
     paths:
     - terraform/**
@@ -31,13 +31,13 @@ jobs:
         working-directory: ./terraform
 
     steps:
-    - name: Check source code
+    - name: Checkout source code
       uses: actions/checkout@v4
 
     - name: Setup Terraform with specified version on the runner
-      uses: hashicorp/setup-terraform@v3
-      # with:
-      #   terraform_version: "1.6.3"
+      uses: hashicorp/setup-terraform@v2
+      #with:
+      #  terraform_version: 1.6.3
 
     - name: Terraform init
       id: init
@@ -60,9 +60,9 @@ jobs:
       if: steps.plan.outcome == 'failure'
       run: exit 1
 
-    - name: Terraform apply
-      id: apply
-      if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/main')
+    - name: Terraform Apply
+      id: apple
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
       run: terraform apply -auto-approve -input=false -parallelism=1 planfile
 
     - name: Configure AWS credentials
